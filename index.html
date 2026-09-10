@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>元火 · 个人事务台 v1.7</title>
+<title>元火 · 个人事务台 v1.8</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzAiIGZpbGw9IiNkODRiNWQiLz48dGV4dCB4PSIzMiIgeT0iMzIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIiBmb250LXNpemU9IjM0IiBmb250LXdlaWdodD0iODAwIiBmb250LWZhbWlseT0iTWljcm9zb2Z0IFlhSGVpLFBpbmdGYW5nIFNDLE5vdG8gU2FucyBDSksgU0Msc2Fucy1zZXJpZiIgZmlsbD0id2hpdGUiPuWFgzwvdGV4dD48L3N2Zz4=">
 <link rel="shortcut icon" href="favicon.ico">
 <style>
 :root{
   --bg:#fff3f7; --panel:#fffafd; --panel2:#fff6f9; --line:#eadce2;
   --text:#342a2e; --muted:#8d7c83; --accent:#b85f7d; --accent-2:#d884a0; --accent-soft:#f9e1e9;
+  --sidebar-bg:#fff8fb; --hover-soft:#fff0f5; --active-soft:#fae8ef;
   --shadow:0 12px 32px rgba(146,76,101,.09);
 }
 *{box-sizing:border-box}
@@ -19,7 +20,7 @@ button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 .app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
 .sidebar{
-  position:sticky;top:0;height:100vh;background:#fff8fb;border-right:1px solid var(--line);
+  position:sticky;top:0;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--line);
   padding:22px 12px;display:flex;flex-direction:column;overflow:hidden
 }
 .logo{display:flex;align-items:center;gap:11px;padding:0 8px 28px}
@@ -56,7 +57,7 @@ button{cursor:pointer}
   display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;
   color:#858087;text-align:left
 }
-.sidebar-group-toggle:hover{background:#fff0f5;color:#5e5559}
+.sidebar-group-toggle:hover{background:var(--hover-soft);color:#5e5559}
 .sidebar-group-title{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600}
 .sidebar-group-title small{font-size:10px;font-weight:500;color:#aaa0a5}
 .sidebar-group-chevron{font-size:12px;color:#aaa0a5;transition:transform .16s ease}
@@ -68,7 +69,7 @@ button{cursor:pointer}
   display:grid;grid-template-columns:18px minmax(0,1fr) auto;align-items:center;
   min-height:34px;padding:4px 9px 4px 13px;border-radius:9px;cursor:pointer
 }
-.dept-row:hover,.dept-row.active,.project-row:hover,.project-row.active{background:#fae8ef}
+.dept-row:hover,.dept-row.active,.project-row:hover,.project-row.active{background:var(--active-soft)}
 .dept-row.active,.project-row.active{color:var(--accent)}
 .color-wrap{position:relative;width:16px;height:16px;display:grid;place-items:center}
 .color-dot{width:8px;height:8px;border-radius:50%;border:0;padding:0}
@@ -88,7 +89,7 @@ button{cursor:pointer}
   border:0;background:transparent;border-radius:9px;padding:8px 10px;display:grid;
   grid-template-columns:18px 1fr auto;align-items:center;gap:8px;color:#6f7c8c;text-align:left
 }
-.trash-entry:hover{background:#fae8ef;color:var(--accent)}
+.trash-entry:hover{background:var(--active-soft);color:var(--accent)}
 .trash-icon{font-size:15px}
 .trash-count{
   min-width:20px;height:20px;border-radius:999px;background:#f8e7ed;color:#8f7080;
@@ -454,7 +455,7 @@ body.has-custom-bg .calendar-view .day.today{
 .undo-toast button{
   border:0;background:#b85f7d;color:#fff;border-radius:7px;padding:5px 8px;font-size:10px
 }
-/* v1.7 数据导入导出 */
+/* v1.8 主题色 + 可复制迁移密钥 */
 .data-manager{display:flex;flex-direction:column;gap:10px}
 .data-manager-intro{font-size:11px;line-height:1.6;color:#7f8792;background:#fff8fb;border:1px solid var(--line);border-radius:9px;padding:10px}
 .data-manager-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:11px}
@@ -463,6 +464,11 @@ body.has-custom-bg .calendar-view .day.today{
 .data-manager-action{width:100%;justify-content:center}
 .data-manager-file{display:flex;align-items:center;justify-content:center;margin-bottom:8px;text-align:center}
 .data-manager-note{font-size:9px;line-height:1.5;color:#aa8e99}
+.data-transfer-box{width:100%;min-height:92px;max-height:150px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:9px;line-height:1.45;word-break:break-all}
+.data-transfer-actions{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:7px}
+.theme-row{display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:9px;align-items:center}
+.theme-color-input{width:54px;height:34px;padding:2px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer}
+
 .appearance-editor-modal{
   width:min(980px,96vw);padding:18px 20px 16px;max-height:94vh
 }
@@ -927,7 +933,11 @@ body.has-custom-bg .calendar-view .day.today{
           <input id="cellOpacityRange" type="range" min="45" max="100" step="1"/>
           <span id="cellOpacityValue"></span>
         </div>
-        <div class="appearance-help">信息底色越高，日期格越白，事项文字越清楚。</div>
+        <div class="theme-row" style="margin-top:10px">
+          <label style="font-size:10px;color:#6f7c8e">主题色</label>
+          <input id="themeColorInput" class="theme-color-input" type="color" value="#b85f7d" title="选择主题色"/>
+        </div>
+        <div class="appearance-help">主题色默认为淡粉色，可自行选择；信息底色越高，日期格越白，事项文字越清楚。</div>
       </section>
     </div>
 
@@ -964,34 +974,37 @@ body.has-custom-bg .calendar-view .day.today{
 </div>
 
 <div id="dataModalBg" class="modal-bg hidden">
-  <div class="modal" style="width:min(520px,100%)">
+  <div class="modal" style="width:min(560px,100%)">
     <h2 style="font-size:19px">数据管理</h2>
     <div class="data-manager">
       <div class="data-manager-intro">
-        将当前事务台完整打包，包括事务、项目、部门颜色、昵称、头像、背景和其他本地设置。数据只在本机处理，不会上传服务器。
+        将事务、项目、部门颜色、昵称、头像、背景、主题色和其他本地设置加密为一串可复制的迁移密钥。数据只在本机加密/解密，不上传服务器。
       </div>
       <section class="data-manager-card">
-        <div class="data-manager-title">导出全部数据</div>
-        <div class="data-manager-help">生成一个 <b>.clubdata</b> 文件。默认使用密码加密，换电脑或浏览器时可用它恢复整个事务台。</div>
+        <div class="data-manager-title">生成迁移密钥</div>
+        <div class="data-manager-help">设置密码后生成一串加密文本。把“迁移密钥 + 密码”带到另一台设备即可恢复全部数据。</div>
         <div class="field">
-          <label>导出密码</label>
-          <input id="dataExportPassword" type="password" autocomplete="new-password" placeholder="设置一个密码"/>
+          <label>加密密码</label>
+          <input id="dataExportPassword" type="password" autocomplete="new-password" placeholder="至少 4 个字符"/>
         </div>
-        <button type="button" class="primary-btn data-manager-action" id="dataExportBtn">⇩ 导出全部数据</button>
+        <button type="button" class="primary-btn data-manager-action" id="dataExportBtn">生成迁移密钥</button>
+        <textarea id="dataExportKey" class="data-transfer-box" readonly placeholder="生成后的迁移密钥会显示在这里"></textarea>
+        <div class="data-transfer-actions">
+          <div class="small-help" id="dataExportStatus">尚未生成</div>
+          <button type="button" class="ghost-btn" id="dataCopyBtn" disabled>复制密钥</button>
+        </div>
       </section>
       <section class="data-manager-card">
-        <div class="data-manager-title">导入全部数据</div>
-        <div class="data-manager-help">导入后会覆盖当前事务台的数据，并自动刷新页面。建议先导出当前数据作为备份。</div>
-        <label class="ghost-btn data-manager-file" for="dataImportFile">选择 .clubdata 文件</label>
-        <input id="dataImportFile" class="hidden" type="file" accept=".clubdata,.json,application/json,text/plain"/>
+        <div class="data-manager-title">从迁移密钥恢复</div>
+        <div class="data-manager-help">粘贴另一台设备生成的迁移密钥并输入对应密码。恢复会覆盖当前事务台数据。</div>
+        <textarea id="dataImportKey" class="data-transfer-box" placeholder="在这里粘贴迁移密钥"></textarea>
         <div class="field">
-          <label>导入密码</label>
-          <input id="dataImportPassword" type="password" autocomplete="current-password" placeholder="输入导出时设置的密码"/>
+          <label>解密密码</label>
+          <input id="dataImportPassword" type="password" autocomplete="current-password" placeholder="输入生成密钥时设置的密码"/>
         </div>
-        <button type="button" class="ghost-btn data-manager-action" id="dataImportBtn" disabled>⇧ 导入并恢复</button>
-        <div class="small-help" id="dataImportFileName">尚未选择文件</div>
+        <button type="button" class="ghost-btn data-manager-action" id="dataImportBtn">导入并恢复</button>
       </section>
-      <div class="data-manager-note">注意：导入会覆盖当前本地数据。背景图片也会一并恢复。</div>
+      <div class="data-manager-note">迁移密钥本身已加密，但仍建议不要公开发布。背景图片和头像会包含在密钥中，因此使用自定义图片时密钥可能较长。</div>
     </div>
     <div class="modal-actions" style="justify-content:flex-end">
       <button type="button" class="ghost-btn" id="dataCloseBtn">关闭</button>
@@ -1104,10 +1117,12 @@ const dataModalBg=document.getElementById("dataModalBg");
 const dataCloseBtn=document.getElementById("dataCloseBtn");
 const dataExportBtn=document.getElementById("dataExportBtn");
 const dataExportPassword=document.getElementById("dataExportPassword");
-const dataImportFile=document.getElementById("dataImportFile");
+const dataExportKey=document.getElementById("dataExportKey");
+const dataExportStatus=document.getElementById("dataExportStatus");
+const dataCopyBtn=document.getElementById("dataCopyBtn");
+const dataImportKey=document.getElementById("dataImportKey");
 const dataImportPassword=document.getElementById("dataImportPassword");
 const dataImportBtn=document.getElementById("dataImportBtn");
-const dataImportFileName=document.getElementById("dataImportFileName");
 
 const PEOPLE=["全体","社长","大活","场财","日常","外联","组织部","cos部","宣传部","技术部","动研部","实践部","节目组","特殊场务"];
 const DEFAULT_COLORS={
@@ -1151,32 +1166,6 @@ const demoDate=off=>{const d=new Date();d.setDate(d.getDate()+off);return dateSt
 
 const seed=[
  {id:crypto.randomUUID(),title:"节目招募推送",type:"线上",mainOwner:"宣传部",otherOwners:[],date:"2026-09-08",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"节目招募停止",type:"线上",mainOwner:"宣传部",otherOwners:[],date:"2026-09-15",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"场务策划",type:"线上",mainOwner:"场财",otherOwners:[],date:"2026-09-17",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"奖品确定",type:"线上",mainOwner:"社长",otherOwners:[],date:"2026-09-17",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"奖品确定",type:"线上",mainOwner:"大活",otherOwners:[],date:"2026-09-17",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"宣传策划",type:"线上",mainOwner:"宣传部",otherOwners:[],date:"2026-09-17",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"场务招募推送",type:"线上",mainOwner:"宣传部",otherOwners:[],date:"2026-09-19",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"节目内容及顺序",type:"线上",mainOwner:"大活",otherOwners:[],date:"2026-09-21",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"特殊场务确定",type:"线上",mainOwner:"场财",otherOwners:[],date:"2026-09-25",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"物料印刷确定",type:"线上",mainOwner:"实践部",otherOwners:[],date:"2026-09-28",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"物料印刷确定",type:"线上",mainOwner:"组织部",otherOwners:[],date:"2026-09-28",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"全部场务确定",type:"线上",mainOwner:"场财",otherOwners:[],date:"2026-10-02",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"场务本初稿",type:"线上",mainOwner:"场财",otherOwners:[],date:"2026-10-05",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"台本初稿",type:"线上",mainOwner:"大活",otherOwners:[],date:"2026-10-05",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"互动终稿",type:"线上",mainOwner:"动研部",otherOwners:[],date:"2026-10-09",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"互动PPT",type:"线上",mainOwner:"动研部",otherOwners:[],date:"2026-10-11",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"物料情况确认",type:"线上",mainOwner:"组织部",otherOwners:[],date:"2026-10-11",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"海报张贴开始",type:"线下",mainOwner:"场财",otherOwners:[],date:"2026-10-12",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"场务本终稿",type:"线上",mainOwner:"场财",otherOwners:[],date:"2026-10-12",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"台本终稿",type:"线上",mainOwner:"大活",otherOwners:[],date:"2026-10-12",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"节目预告推送",type:"线上",mainOwner:"宣传部",otherOwners:[],date:"2026-10-13",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"台本印刷",type:"线下",mainOwner:"组织部",otherOwners:[],date:"2026-10-13",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"PPT交付",type:"线上",mainOwner:"技术部",otherOwners:[],date:"2026-10-15",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"OP/ED交付",type:"线上",mainOwner:"技术部",otherOwners:[],date:"2026-10-15",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
- {id:crypto.randomUUID(),title:"PPT完善",type:"线上",mainOwner:"技术部",otherOwners:[],date:"2026-10-18",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"high",status:"未开始",note:"晚会前"},
- {id:crypto.randomUUID(),title:"预约B101",type:"线下",mainOwner:"组织部",otherOwners:[],date:"",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"B101",priority:"medium",status:"待确认",note:"日期待定"},
- {id:crypto.randomUUID(),title:"预约审核教室",type:"线下",mainOwner:"组织部",otherOwners:[],date:"",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"待确认",note:"日期待定"}
 ];
 
 function canonicalPerson(name){
@@ -1238,7 +1227,7 @@ const V13_UNDATED_MIGRATION_KEY="club_calendar_v13_undated_schedule_migrated";
 function migrateV13UndatedSchedule(){
   if(localStorage.getItem(V13_UNDATED_MIGRATION_KEY))return;
   const projectName="2026秋季迎新晚会（闪耀至月光尽头）";
-  if(items.some(x=>x.project===projectName)){
+  if(items.length>1 && items.some(x=>x.project===projectName)){
     const pending=[
       {title:"预约B101",type:"线下",mainOwner:"组织部",otherOwners:[],date:"",time:"",project:projectName,location:"B101",priority:"medium",status:"待确认",note:"日期待定"},
       {title:"预约审核教室",type:"线下",mainOwner:"组织部",otherOwners:[],date:"",time:"",project:projectName,location:"",priority:"medium",status:"待确认",note:"日期待定"}
@@ -1292,9 +1281,10 @@ function loadAppearance(){
     const a=JSON.parse(localStorage.getItem(APPEARANCE_KEY)||"{}");
     return {
       imageOpacity:Number.isFinite(Number(a.imageOpacity))?Number(a.imageOpacity):22,
-      cellOpacity:Number.isFinite(Number(a.cellOpacity))?Number(a.cellOpacity):90
+      cellOpacity:Number.isFinite(Number(a.cellOpacity))?Number(a.cellOpacity):90,
+      themeColor:/^#[0-9a-f]{6}$/i.test(String(a.themeColor||""))?String(a.themeColor):"#b85f7d"
     };
-  }catch(e){return {imageOpacity:22,cellOpacity:90}}
+  }catch(e){return {imageOpacity:22,cellOpacity:90,themeColor:"#b85f7d"}}
 }
 let appearance=loadAppearance();
 let pendingAppearance={...appearance};
@@ -1710,9 +1700,32 @@ async function loadBackgroundAsset(){
 function saveAppearance(){
   localStorage.setItem(APPEARANCE_KEY,JSON.stringify(appearance));
 }
+function mixHex(hex,target="#ffffff",amount=.5){
+  const clean=String(hex||"").replace("#","");
+  const tc=String(target).replace("#","");
+  if(!/^[0-9a-f]{6}$/i.test(clean)||!/^[0-9a-f]{6}$/i.test(tc))return hex;
+  const a=[0,2,4].map(i=>parseInt(clean.slice(i,i+2),16));
+  const b=[0,2,4].map(i=>parseInt(tc.slice(i,i+2),16));
+  return "#"+a.map((v,i)=>Math.round(v+(b[i]-v)*amount).toString(16).padStart(2,"0")).join("");
+}
+function applyThemeColor(hex){
+  const color=/^#[0-9a-f]{6}$/i.test(String(hex||""))?String(hex):"#b85f7d";
+  const root=document.documentElement.style;
+  root.setProperty("--accent",color);
+  root.setProperty("--accent-2",mixHex(color,"#ffffff",.28));
+  root.setProperty("--accent-soft",mixHex(color,"#ffffff",.82));
+  root.setProperty("--bg",mixHex(color,"#ffffff",.93));
+  root.setProperty("--panel",mixHex(color,"#ffffff",.97));
+  root.setProperty("--panel2",mixHex(color,"#ffffff",.94));
+  root.setProperty("--line",mixHex(color,"#ffffff",.78));
+  root.setProperty("--sidebar-bg",mixHex(color,"#ffffff",.95));
+  root.setProperty("--hover-soft",mixHex(color,"#ffffff",.90));
+  root.setProperty("--active-soft",mixHex(color,"#ffffff",.85));
+}
 function applyAppearance(source=appearance){
   calendarView.style.setProperty("--calendar-image-opacity",String(source.imageOpacity/100));
   calendarView.style.setProperty("--calendar-cell-alpha",String(source.cellOpacity/100));
+  applyThemeColor(source.themeColor||"#b85f7d");
 }
 let editorImage=null;
 let editorBaseScale=1;
@@ -1740,6 +1753,7 @@ const bgOpacityRangeEl=document.getElementById("bgOpacityRange");
 const bgOpacityValueEl=document.getElementById("bgOpacityValue");
 const cellOpacityRangeEl=document.getElementById("cellOpacityRange");
 const cellOpacityValueEl=document.getElementById("cellOpacityValue");
+const themeColorInputEl=document.getElementById("themeColorInput");
 const appearanceCancelBtnEl=document.getElementById("appearanceCancelBtn");
 const appearanceSaveBtnEl=document.getElementById("appearanceSaveBtn");
 
@@ -1869,14 +1883,14 @@ function showUndoMove(item,oldDate,newDate){
   undoTimer=setTimeout(()=>el.remove(),5000);
 }
 
-/* ===== v1.7 全量数据备份：AES-GCM + PBKDF2 ===== */
+/* ===== v1.8 全量数据迁移：可复制密钥 + 密码 ===== */
 const DATA_BUNDLE_MAGIC="CLUB_CALENDAR_DATA";
-const DATA_BUNDLE_VERSION=1;
+const DATA_BUNDLE_VERSION=2;
 const DATA_ENCODER=new TextEncoder();
 const DATA_DECODER=new TextDecoder();
+const TRANSFER_PREFIX="CC18.";
 function bytesToBase64(bytes){
-  let binary="";
-  const chunk=0x8000;
+  let binary="";const chunk=0x8000;
   for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));
   return btoa(binary);
 }
@@ -1884,6 +1898,14 @@ function base64ToBytes(text){
   const binary=atob(text);const out=new Uint8Array(binary.length);
   for(let i=0;i<binary.length;i++)out[i]=binary.charCodeAt(i);
   return out;
+}
+function base64UrlEncodeText(text){
+  return bytesToBase64(DATA_ENCODER.encode(text)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function base64UrlDecodeText(text){
+  let s=text.replace(/-/g,"+").replace(/_/g,"/");
+  while(s.length%4)s+="=";
+  return DATA_DECODER.decode(base64ToBytes(s));
 }
 async function deriveDataKey(password,salt){
   const material=await crypto.subtle.importKey("raw",DATA_ENCODER.encode(password),"PBKDF2",false,["deriveKey"]);
@@ -1904,11 +1926,8 @@ async function collectFullDataBundle(){
   }
   const bg=await assetGet(BG_ASSET_KEY).catch(()=>null);
   return {
-    magic:DATA_BUNDLE_MAGIC,
-    version:DATA_BUNDLE_VERSION,
-    appVersion:"1.7",
-    exportedAt:new Date().toISOString(),
-    localStorage:local,
+    magic:DATA_BUNDLE_MAGIC,version:DATA_BUNDLE_VERSION,appVersion:"1.8",
+    exportedAt:new Date().toISOString(),localStorage:local,
     indexedDB:{background:bg instanceof Blob?await blobToDataUrl(bg):null}
   };
 }
@@ -1919,19 +1938,13 @@ async function encryptDataBundle(bundle,password){
   const plain=DATA_ENCODER.encode(JSON.stringify(bundle));
   const cipher=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv},key,plain));
   return {
-    magic:DATA_BUNDLE_MAGIC,
-    version:DATA_BUNDLE_VERSION,
-    encryption:"AES-256-GCM",
-    kdf:"PBKDF2-SHA-256",
-    iterations:210000,
-    salt:bytesToBase64(salt),
-    iv:bytesToBase64(iv),
-    data:bytesToBase64(cipher)
+    magic:DATA_BUNDLE_MAGIC,version:DATA_BUNDLE_VERSION,encryption:"AES-256-GCM",
+    kdf:"PBKDF2-SHA-256",iterations:210000,
+    salt:bytesToBase64(salt),iv:bytesToBase64(iv),data:bytesToBase64(cipher)
   };
 }
 async function decryptDataBundle(payload,password){
-  if(!payload||payload.magic!==DATA_BUNDLE_MAGIC||payload.version!==DATA_BUNDLE_VERSION)throw new Error("文件格式或版本不受支持");
-  if(payload.encryption!=="AES-256-GCM"||payload.kdf!=="PBKDF2-SHA-256")throw new Error("不支持的加密方式");
+  if(!payload||payload.magic!==DATA_BUNDLE_MAGIC||payload.version!==DATA_BUNDLE_VERSION)throw new Error("迁移密钥版本不受支持");
   const salt=base64ToBytes(payload.salt),iv=base64ToBytes(payload.iv),cipher=base64ToBytes(payload.data);
   const key=await deriveDataKey(password,salt);
   const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,cipher);
@@ -1939,16 +1952,13 @@ async function decryptDataBundle(payload,password){
   if(bundle.magic!==DATA_BUNDLE_MAGIC||!bundle.localStorage)throw new Error("数据内容无效");
   return bundle;
 }
-function downloadDataFile(payload){
-  const blob=new Blob([JSON.stringify(payload)],{type:"application/octet-stream"});
-  const url=URL.createObjectURL(blob);const a=document.createElement("a");
-  const stamp=new Date().toISOString().replace(/[:.]/g,"-");
-  a.href=url;a.download=`Club_Calendar_Backup_${stamp}.clubdata`;a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+function payloadToTransferKey(payload){return TRANSFER_PREFIX+base64UrlEncodeText(JSON.stringify(payload))}
+function transferKeyToPayload(key){
+  const clean=String(key||"").trim().replace(/\s+/g,"");
+  if(!clean.startsWith(TRANSFER_PREFIX))throw new Error("不是 v1.8 迁移密钥");
+  return JSON.parse(base64UrlDecodeText(clean.slice(TRANSFER_PREFIX.length)));
 }
-function validateBundleStorage(obj){
-  return obj&&typeof obj==="object"&&!Array.isArray(obj);
-}
+function validateBundleStorage(obj){return obj&&typeof obj==="object"&&!Array.isArray(obj)}
 async function restoreFullDataBundle(bundle){
   if(!validateBundleStorage(bundle.localStorage))throw new Error("localStorage 数据无效");
   const local=bundle.localStorage;
@@ -1957,51 +1967,55 @@ async function restoreFullDataBundle(bundle){
   const bg=bundle.indexedDB?.background;
   if(typeof bg==="string"&&bg.startsWith("data:")){
     const blob=await (await fetch(bg)).blob();await assetPut(BG_ASSET_KEY,blob);
-  }else{
-    await assetDelete(BG_ASSET_KEY).catch(()=>{});
-  }
+  }else await assetDelete(BG_ASSET_KEY).catch(()=>{});
 }
 
 dataEntryBtn.onclick=()=>{
   dataModalBg.classList.remove("hidden");
-  dataImportFile.value="";dataImportPassword.value="";dataImportBtn.disabled=true;dataImportFileName.textContent="尚未选择文件";
+  dataExportPassword.value="";dataExportKey.value="";dataExportStatus.textContent="尚未生成";dataCopyBtn.disabled=true;
+  dataImportKey.value="";dataImportPassword.value="";
 };
 dataCloseBtn.onclick=()=>dataModalBg.classList.add("hidden");
 dataModalBg.onclick=e=>{if(e.target===dataModalBg)dataModalBg.classList.add("hidden")};
 dataExportBtn.onclick=async()=>{
   const password=dataExportPassword.value;
-  if(password.length<4){alert("导出密码至少需要 4 个字符。");dataExportPassword.focus();return}
-  dataExportBtn.disabled=true;dataExportBtn.textContent="正在打包…";
+  if(password.length<4){alert("加密密码至少需要 4 个字符。");dataExportPassword.focus();return}
+  dataExportBtn.disabled=true;dataExportBtn.textContent="正在生成…";
   try{
     const bundle=await collectFullDataBundle();
     const payload=await encryptDataBundle(bundle,password);
-    downloadDataFile(payload);
-    dataExportPassword.value="";
-    alert("全部数据已导出。请妥善保存 .clubdata 文件和密码。");
-  }catch(e){console.error(e);alert("导出失败："+(e.message||e));}
-  finally{dataExportBtn.disabled=false;dataExportBtn.textContent="⇩ 导出全部数据"}
+    const key=payloadToTransferKey(payload);
+    dataExportKey.value=key;dataCopyBtn.disabled=false;
+    dataExportStatus.textContent=`已生成 · ${key.length.toLocaleString()} 字符`;
+  }catch(e){console.error(e);alert("生成失败："+(e.message||e))}
+  finally{dataExportBtn.disabled=false;dataExportBtn.textContent="生成迁移密钥"}
 };
-dataImportFile.onchange=()=>{
-  const f=dataImportFile.files[0];
-  dataImportFileName.textContent=f?f.name:"尚未选择文件";
-  dataImportBtn.disabled=!f;
+dataCopyBtn.onclick=async()=>{
+  if(!dataExportKey.value)return;
+  try{
+    await navigator.clipboard.writeText(dataExportKey.value);
+    dataCopyBtn.textContent="已复制";
+    setTimeout(()=>dataCopyBtn.textContent="复制密钥",1200);
+  }catch(e){
+    dataExportKey.focus();dataExportKey.select();
+    document.execCommand("copy");
+  }
 };
 dataImportBtn.onclick=async()=>{
-  const f=dataImportFile.files[0];const password=dataImportPassword.value;
-  if(!f)return;
-  if(!password){alert("请输入导出时设置的密码。");dataImportPassword.focus();return}
+  const keyText=dataImportKey.value.trim(),password=dataImportPassword.value;
+  if(!keyText){alert("请粘贴迁移密钥。");dataImportKey.focus();return}
+  if(!password){alert("请输入对应的解密密码。");dataImportPassword.focus();return}
   if(!confirm("导入后会覆盖当前事务台的本地数据，并刷新页面。确定继续吗？"))return;
   dataImportBtn.disabled=true;dataImportBtn.textContent="正在恢复…";
   try{
-    const payload=JSON.parse(await f.text());
+    const payload=transferKeyToPayload(keyText);
     const bundle=await decryptDataBundle(payload,password);
     await restoreFullDataBundle(bundle);
-    alert("数据恢复成功，页面将刷新。");
-    location.reload();
+    alert("数据恢复成功，页面将刷新。");location.reload();
   }catch(e){
     console.error(e);
-    alert("导入失败：密码错误、文件损坏或文件格式不正确。\n\n"+(e.message||""));
-    dataImportBtn.disabled=false;dataImportBtn.textContent="⇧ 导入并恢复";
+    alert("导入失败：密码错误、密钥损坏或格式不正确。\n\n"+(e.message||""));
+    dataImportBtn.disabled=false;dataImportBtn.textContent="导入并恢复";
   }
 };
 
@@ -2474,6 +2488,7 @@ cellOpacityRangeEl.oninput=()=>{
 function closeAppearanceEditor(){
   appearanceModalBgEl.classList.add("hidden");
   resetUnifiedEditor();
+  applyThemeColor(appearance.themeColor||"#b85f7d");
 }
 appearanceCancelBtnEl.onclick=closeAppearanceEditor;
 appearanceCloseBtnEl.onclick=closeAppearanceEditor;
@@ -2481,6 +2496,10 @@ appearanceModalBgEl.onclick=e=>{
   if(e.target===appearanceModalBgEl)closeAppearanceEditor();
 }
 
+themeColorInputEl.oninput=()=>{
+  pendingAppearance.themeColor=themeColorInputEl.value||"#b85f7d";
+  applyThemeColor(pendingAppearance.themeColor);
+};
 appearanceSaveBtnEl.onclick=async()=>{
   appearanceSaveBtnEl.disabled=true;
   appearanceSaveBtnEl.textContent="保存中…";
