@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>元火 · 个人事务台 v1.9.3</title>
+<title>元火 · 个人事务台 v2.0</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzAiIGZpbGw9IiNkODRiNWQiLz48dGV4dCB4PSIzMiIgeT0iMzIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIiBmb250LXNpemU9IjM0IiBmb250LXdlaWdodD0iODAwIiBmb250LWZhbWlseT0iTWljcm9zb2Z0IFlhSGVpLFBpbmdGYW5nIFNDLE5vdG8gU2FucyBDSksgU0Msc2Fucy1zZXJpZiIgZmlsbD0id2hpdGUiPuWFgzwvdGV4dD48L3N2Zz4=">
 <link rel="shortcut icon" href="favicon.ico">
 <style>
@@ -91,6 +91,9 @@ button{cursor:pointer}
 }
 .trash-entry:hover{background:var(--active-soft);color:var(--accent)}
 .trash-icon{font-size:15px}
+.sidebar-svg-icon{width:18px;height:18px;display:grid;place-items:center;color:#8a95a3}
+.sidebar-svg-icon svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.trash-entry:hover .sidebar-svg-icon{color:var(--accent)}
 .trash-count{
   min-width:20px;height:20px;border-radius:999px;background:#f8e7ed;color:#8f7080;
   display:grid;place-items:center;font-size:10px;padding:0 5px
@@ -298,6 +301,13 @@ textarea{min-height:68px;resize:vertical;line-height:1.5}
 .modal-actions{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
 .right-actions{display:flex;gap:8px}
 .danger{border:1px solid #eed3cf;background:#fff;color:#b5483d;border-radius:8px;padding:8px 11px}
+.danger-btn{border:1px solid #e8b8b2;background:#fff7f6;color:#b33e34;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700}
+.danger-btn:hover{background:#fff0ee;border-color:#d99790}
+.account-danger-zone{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.account-danger-copy{min-width:0}
+.account-danger-copy b{display:block;font-size:11px;color:#9f453d;margin-bottom:3px}
+.account-danger-copy span{display:block;font-size:9px;color:#9aa1a9;line-height:1.45}
+.delete-warning{border:1px solid #efd0cb;background:#fff8f7;border-radius:10px;padding:10px 11px;color:#9d4a42;font-size:10px;line-height:1.55;margin-bottom:11px}
 .note{font-size:9px;color:#9ba198;margin-top:2px}
 
 .view-tab{border:0;background:transparent;padding:5px 9px;font-size:11px;color:#7d8797;border-radius:7px}
@@ -674,22 +684,22 @@ body.has-custom-bg .calendar-view .day.today{
 
     <div class="sidebar-bottom">
       <button class="trash-entry" id="appearanceEntryBtn">
-        <span class="trash-icon">✦</span>
+        <span class="sidebar-svg-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.8l1.15 3.05L16.2 8l-3.05 1.15L12 12.2l-1.15-3.05L7.8 8l3.05-1.15L12 3.8Z"/><path d="M18.2 12.8l.75 2 2 .75-2 .75-.75 2-.75-2-2-.75 2-.75.75-2Z"/><path d="M5.4 13.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4Z"/></svg></span>
         <span>外观与背景</span>
         <span></span>
       </button>
       <button class="trash-entry" id="trashEntryBtn">
-        <span class="trash-icon">⌫</span>
+        <span class="sidebar-svg-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 3h6l1 4H8l1-4Z"/><path d="M7 7l1 13h8l1-13"/><path d="M10 11v5M14 11v5"/></svg></span>
         <span>回收站</span>
         <span class="trash-count" id="trashCount">0</span>
       </button>
       <button class="trash-entry" id="shareEntryBtn">
-        <span class="trash-icon">⌁</span>
+        <span class="sidebar-svg-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="19" r="2.3"/><path d="M8 11l7.7-4.6M8 13l7.7 4.6"/></svg></span>
         <span>日历分享</span>
         <span></span>
       </button>
       <button class="trash-entry" id="dataEntryBtn">
-        <span class="trash-icon">⇄</span>
+        <span class="sidebar-svg-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg></span>
         <span>数据管理</span>
         <span></span>
       </button>
@@ -1129,7 +1139,20 @@ body.has-custom-bg .calendar-view .day.today{
       <div class="field"><label>当前账号</label><div id="accountCurrentName" style="font-weight:800"></div></div>
       <div class="account-status">个人设置与当前云端日历会自动同步。日历分享不会携带你的头像、昵称、介绍或背景。</div>
       <div class="modal-actions" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><button type="button" class="ghost-btn" id="accountLogoutBtn">退出登录</button><div class="right-actions"><button type="button" class="ghost-btn" id="accountEditProfileBtn">编辑个人资料</button><button type="button" class="primary-btn" id="accountDoneBtn">完成</button></div></div>
+      <div class="account-danger-zone"><div class="account-danger-copy"><b>注销账号</b><span>永久删除云端日历、个人资料、头像背景和分享记录，同时清空本机账号缓存。</span></div><button type="button" class="danger-btn" id="accountDeleteBtn">注销账号</button></div>
     </div>
+  </div>
+</div>
+
+<div id="deleteAccountModalBg" class="modal-bg hidden">
+  <div class="modal" style="width:min(430px,100%)">
+    <h2 style="font-size:19px">注销账号</h2>
+    <div class="delete-warning">此操作不可恢复。注销后，账号、云端日历、协作关系、个人资料、头像与背景、由该账号创建的分享记录都会永久删除；当前浏览器中的账号缓存也会清空。</div>
+    <div class="field"><label>当前账号</label><div id="deleteAccountName" style="font-weight:800"></div></div>
+    <div class="field"><label>输入密码确认</label><input id="deleteAccountPassword" type="password" maxlength="72" autocomplete="current-password" placeholder="当前账号密码"/></div>
+    <div class="field"><label>再次确认</label><input id="deleteAccountPhrase" maxlength="4" placeholder="输入“注销”"/></div>
+    <div class="account-status" id="deleteAccountStatus">只有输入正确密码并填写“注销”后才会执行。</div>
+    <div class="modal-actions" style="justify-content:flex-end"><div class="right-actions"><button type="button" class="ghost-btn" id="deleteAccountCancelBtn">取消</button><button type="button" class="danger-btn" id="deleteAccountConfirmBtn">永久注销</button></div></div>
   </div>
 </div>
 
@@ -1951,7 +1974,7 @@ function showUndoMove(item,oldDate,newDate){
 const CALENDAR_KEY_PREFIX="CCAL19.";
 const CALENDAR_KEY_MAGIC="CLUB_CALENDAR_ONLY";
 function calendarPayloadToKey(data){
-  const payload={magic:CALENDAR_KEY_MAGIC,version:1,appVersion:"1.9.3",exportedAt:new Date().toISOString(),data};
+  const payload={magic:CALENDAR_KEY_MAGIC,version:1,appVersion:"2.0",exportedAt:new Date().toISOString(),data};
   return CALENDAR_KEY_PREFIX+base64UrlEncodeText(JSON.stringify(payload));
 }
 function calendarKeyToPayload(key){
@@ -2009,7 +2032,7 @@ async function collectFullDataBundle(){
   }
   const bg=await assetGet(BG_ASSET_KEY).catch(()=>null);
   return {
-    magic:DATA_BUNDLE_MAGIC,version:DATA_BUNDLE_VERSION,appVersion:"1.9.3",
+    magic:DATA_BUNDLE_MAGIC,version:DATA_BUNDLE_VERSION,appVersion:"2.0",
     exportedAt:new Date().toISOString(),localStorage:local,
     indexedDB:{background:bg instanceof Blob?await blobToDataUrl(bg):null}
   };
@@ -2907,6 +2930,20 @@ async function ccFetch(path,opts={}){const r=await fetch(CC_SUPABASE_URL+path,{.
 function ccSaveSession(s){ccSession=s||null;ccUser=s?.user||null;if(s)localStorage.setItem(CC_SESSION_KEY,JSON.stringify(s));else localStorage.removeItem(CC_SESSION_KEY)}
 async function ccRefreshSession(){if(!ccSession?.refresh_token)return false;try{const r=await fetch(`${CC_SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:ccSession.refresh_token})});if(!r.ok)throw 0;ccSaveSession(await r.json());return true}catch(_){ccSaveSession(null);return false}}
 async function ccAuthCall(action,username,password){const r=await fetch(`${CC_SUPABASE_URL}/functions/v1/club-calendar-auth`,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({action,username,password})});const d=await r.json();if(!r.ok)throw new Error(d.error||"请求失败");ccSaveSession(d.session);return d.session}
+async function ccDeleteAccount(password){
+  if(!ccSession?.access_token)throw new Error("登录状态已失效，请重新登录");
+  const run=()=>fetch(`${CC_SUPABASE_URL}/functions/v1/club-calendar-auth`,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`,"Content-Type":"application/json"},body:JSON.stringify({action:"delete_account",password})});
+  let r=await run();
+  if(r.status===401&&ccSession?.refresh_token){try{await ccRefreshSession();r=await run()}catch(_){}}
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d.error||"注销失败");
+  return d;
+}
+async function ccClearAccountLocalCache(){
+  [ITEM_KEY,COLOR_KEY,WORKSPACE_KEY,PROJECT_KEY,TRASH_KEY,PROFILE_KEY,APPEARANCE_KEY,CC_CALENDAR_ID_KEY].forEach(k=>localStorage.removeItem(k));
+  try{await assetDelete(BG_ASSET_KEY)}catch(_){}
+  ccCalendarId="";ccStopRealtime();ccSaveSession(null);
+}
 function ccCalendarPayload(){return {items,projects,colors,trash,workspaceName:loadWorkspaceName(),schemaVersion:1}}
 function ccApplyCalendarData(data){if(!data||typeof data!=="object")return;ccApplyingCloud=true;items=Array.isArray(data.items)?data.items.map(normalizeItem):[];projects=Array.isArray(data.projects)?data.projects:[];colors={...DEFAULT_COLORS,...(data.colors||{})};trash=data.trash&&typeof data.trash==="object"?data.trash:{tasks:[],projects:[]};if(data.workspaceName)localStorage.setItem(WORKSPACE_KEY,String(data.workspaceName));localStorage.setItem(ITEM_KEY,JSON.stringify(items));localStorage.setItem(PROJECT_KEY,JSON.stringify(projects));localStorage.setItem(COLOR_KEY,JSON.stringify(colors));localStorage.setItem(TRASH_KEY,JSON.stringify(trash));ccApplyingCloud=false}
 async function ccLoadProfile(){if(!ccUser)return;const rows=await ccFetch(`/rest/v1/profiles?user_id=eq.${encodeURIComponent(ccUser.id)}&select=username,nickname,intro,settings`);ccProfile=rows[0]||null;if(!ccProfile)return;profile.nickname=ccProfile.nickname||ccProfile.username;profile.intro=ccProfile.intro||"这是一条介绍(*￣▽￣*)";const s=ccProfile.settings||{};appearance={imageOpacity:Number(s.imageOpacity??22),cellOpacity:Number(s.cellOpacity??90),themeColor:s.themeColor||"#b85f7d"};localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));localStorage.setItem(APPEARANCE_KEY,JSON.stringify(appearance));await ccLoadCloudAsset("avatar.jpg",blob=>blobToDataUrl(blob).then(v=>{profile.avatarData=v;renderProfile()}));await ccLoadCloudAsset("background.jpg",async blob=>{await assetPut(BG_ASSET_KEY,blob);await loadBackgroundAsset()});applyAppearance();renderProfile()}
@@ -2946,6 +2983,16 @@ registerTabBtn.onclick=()=>{ccAuthMode="register";registerTabBtn.classList.add("
 accountCloseBtn.onclick=accountDoneBtn.onclick=()=>accountModalBg.classList.add("hidden");accountModalBg.onclick=e=>{if(e.target===accountModalBg)accountModalBg.classList.add("hidden")};
 accountSubmitBtn.onclick=async()=>{const u=accountUsername.value.trim(),p=accountPassword.value;if(ccAuthMode==="register"&&p!==accountPasswordConfirm.value){accountStatus.textContent="两次密码不一致";return}accountSubmitBtn.disabled=true;accountStatus.textContent=ccAuthMode==="login"?"正在登录…":"正在注册…";try{await ccAuthCall(ccAuthMode,u,p);await ccAfterLogin();accountModalBg.classList.add("hidden")}catch(e){accountStatus.textContent=e.message||"操作失败"}finally{accountSubmitBtn.disabled=false}};
 accountLogoutBtn.onclick=async()=>{try{if(ccSession?.access_token)await fetch(`${CC_SUPABASE_URL}/auth/v1/logout`,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}})}catch(_){}ccSaveSession(null);ccCalendarId="";localStorage.removeItem(CC_CALENDAR_ID_KEY);ccStopRealtime();location.reload()};
+accountDeleteBtn.onclick=()=>{deleteAccountName.textContent=ccProfile?.username||profile.nickname||"当前账号";deleteAccountPassword.value="";deleteAccountPhrase.value="";deleteAccountStatus.textContent="只有输入正确密码并填写“注销”后才会执行。";accountModalBg.classList.add("hidden");deleteAccountModalBg.classList.remove("hidden")};
+deleteAccountCancelBtn.onclick=()=>{deleteAccountModalBg.classList.add("hidden");accountModalBg.classList.remove("hidden")};
+deleteAccountModalBg.onclick=e=>{if(e.target===deleteAccountModalBg){deleteAccountModalBg.classList.add("hidden");accountModalBg.classList.remove("hidden")}};
+deleteAccountConfirmBtn.onclick=async()=>{
+  const pwd=deleteAccountPassword.value,phrase=deleteAccountPhrase.value.trim();
+  if(phrase!=="注销"){deleteAccountStatus.textContent="请在确认框中输入“注销”。";return}
+  if(pwd.length<6){deleteAccountStatus.textContent="请输入当前账号密码。";return}
+  deleteAccountConfirmBtn.disabled=true;deleteAccountStatus.textContent="正在注销账号并清理云端数据…";
+  try{await ccDeleteAccount(pwd);await ccClearAccountLocalCache();alert("账号已注销，云端数据与本机账号缓存已清除。");location.reload()}catch(e){deleteAccountStatus.textContent=e.message||"注销失败"}finally{deleteAccountConfirmBtn.disabled=false}
+};
 const ccOldAppearanceOpen=appearanceEntryBtn.onclick;appearanceEntryBtn.onclick=()=>{if(!ccUser){ccOpenAccount();accountStatus.textContent="登录后才能使用外观与背景。";return}ccOldAppearanceOpen()};
 const ccOldProfileSave=profileSaveBtn.onclick;profileSaveBtn.onclick=async()=>{ccOldProfileSave();if(!ccUser)return;try{if(profile.avatarData){const b=await (await fetch(profile.avatarData)).blob();await ccUploadAsset("avatar.jpg",b)}else await ccDeleteAsset("avatar.jpg");await ccUpdateProfile()}catch(e){alert(e.message)}};
 const ccOldAppearanceSave=appearanceSaveBtnEl.onclick;appearanceSaveBtnEl.onclick=async()=>{if(!ccUser){ccOpenAccount();return}await ccOldAppearanceSave();try{const b=await assetGet(BG_ASSET_KEY).catch(()=>null);if(b instanceof Blob)await ccUploadAsset("background.jpg",b);else await ccDeleteAsset("background.jpg");await ccUpdateProfile()}catch(e){alert(e.message)}};
@@ -2957,7 +3004,7 @@ createCloudShareBtn.onclick=async()=>{if(!ccUser){shareStatus.textContent="可�
 createLocalShareBtn.onclick=async()=>{try{let d;if(!ccUser){d=await ccShareCall({action:"create",mode:"local",snapshot_data:ccCalendarPayload()})}else{await ccPushCalendar();d=await ccShareCall({action:"create",calendar_id:ccCalendarId,mode:"local"})}generatedShareCode.value=d.code;shareStatus.textContent=d.guest?"游客副本码已生成，有效期 7 天。接收者导入后与原日历断开。":"副本码已生成。接收者导入后与原日历断开。"}catch(e){shareStatus.textContent=e.message}};
 redeemShareBtn.onclick=async()=>{const code=redeemShareCode.value.trim().toUpperCase();if(!code)return;try{const d=await ccShareCall({action:"redeem",code});if(d.mode==="local"){if(!confirm("导入本地副本会覆盖当前浏览器中的日历内容。继续吗？"))return;ccApplyCalendarData(d.data);ccCalendarId="";localStorage.removeItem(CC_CALENDAR_ID_KEY);renderAll();shareModalBg.classList.add("hidden");return}ccCalendarId=d.calendar.id;localStorage.setItem(CC_CALENDAR_ID_KEY,ccCalendarId);ccApplyCalendarData(d.calendar.data);renderAll();ccStartRealtime();shareStatus.textContent="已加入云端协作日历。"}catch(e){shareStatus.textContent=e.message}};
 async function ccAfterLogin(){const hadCloudId=!!localStorage.getItem(CC_CALENDAR_ID_KEY);const legacyPayload=!hadCloudId&&items.length>0?ccCalendarPayload():null;await ccLoadProfile();await ccLoadCalendar();if(legacyPayload&&ccCalendarId&&confirm("检测到本机旧版日历。是否把这份本机日历上传到当前账号？")){ccApplyCalendarData(legacyPayload);renderAll();await ccPushCalendar()}ccRenderAccount()}
-async function ccInit(){try{const raw=localStorage.getItem(CC_SESSION_KEY);if(raw)ccSaveSession(JSON.parse(raw));if(ccSession){const exp=Number(ccSession.expires_at||0)*1000;if(exp&&Date.now()>exp-60000)await ccRefreshSession()}if(ccSession?.access_token){const r=await fetch(`${CC_SUPABASE_URL}/auth/v1/user`,{headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}});if(r.ok){ccUser=await r.json();await ccAfterLogin()}else ccSaveSession(null)}if(!ccUser){appearance={imageOpacity:22,cellOpacity:90,themeColor:"#b85f7d"};profile={nickname:"登录 / 注册",intro:"游客模式 · 数据仅保存在本机",avatarData:""};revokeCurrentBgUrl();document.body.classList.remove("has-custom-bg");calendarBg.style.backgroundImage="none";applyAppearance();ccRenderAccount()}}catch(e){console.error("v1.9.2 init",e);ccRenderAccount()}}
+async function ccInit(){try{const raw=localStorage.getItem(CC_SESSION_KEY);if(raw)ccSaveSession(JSON.parse(raw));if(ccSession){const exp=Number(ccSession.expires_at||0)*1000;if(exp&&Date.now()>exp-60000)await ccRefreshSession()}if(ccSession?.access_token){const r=await fetch(`${CC_SUPABASE_URL}/auth/v1/user`,{headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}});if(r.ok){ccUser=await r.json();await ccAfterLogin()}else ccSaveSession(null)}if(!ccUser){appearance={imageOpacity:22,cellOpacity:90,themeColor:"#b85f7d"};profile={nickname:"登录 / 注册",intro:"游客模式 · 数据仅保存在本机",avatarData:""};revokeCurrentBgUrl();document.body.classList.remove("has-custom-bg");calendarBg.style.backgroundImage="none";applyAppearance();ccRenderAccount()}}catch(e){console.error("v2.0 init",e);ccRenderAccount()}}
 
 exportTableBtn.onclick=exportScheduleTable;
 renderAll();
