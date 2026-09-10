@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>元火 · 个人事务台 v1.8</title>
+<title>元火 · 个人事务台 v1.9</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzAiIGZpbGw9IiNkODRiNWQiLz48dGV4dCB4PSIzMiIgeT0iMzIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIiBmb250LXNpemU9IjM0IiBmb250LXdlaWdodD0iODAwIiBmb250LWZhbWlseT0iTWljcm9zb2Z0IFlhSGVpLFBpbmdGYW5nIFNDLE5vdG8gU2FucyBDSksgU0Msc2Fucy1zZXJpZiIgZmlsbD0id2hpdGUiPuWFgzwvdGV4dD48L3N2Zz4=">
 <link rel="shortcut icon" href="favicon.ico">
 <style>
@@ -619,6 +619,16 @@ body.has-custom-bg .calendar-view .day.today{
   #modalBg .modal{padding:11px 13px;max-height:98vh}
 }
 
+
+/* v1.9 account + sharing */
+.account-tabs{display:flex;gap:6px;margin:8px 0 16px}.account-tabs button{flex:1}
+.account-tabs button.active{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.account-status,.cloud-status{font-size:10px;color:#8b96a5;line-height:1.5}.cloud-status{margin-left:auto}
+.share-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.share-mode-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2)}
+.share-mode-card b{font-size:12px}.share-mode-card p{font-size:10px;color:#8b96a5;line-height:1.5;min-height:45px}.share-code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:18px;letter-spacing:1px;text-align:center;font-weight:800}
+.locked-entry{opacity:.48}.profile-card.guest .profile-avatar{filter:grayscale(1)}
+@media(max-width:600px){.share-mode-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -672,6 +682,11 @@ body.has-custom-bg .calendar-view .day.today{
         <span class="trash-icon">⌫</span>
         <span>回收站</span>
         <span class="trash-count" id="trashCount">0</span>
+      </button>
+      <button class="trash-entry" id="shareEntryBtn">
+        <span class="trash-icon">⌁</span>
+        <span>日历分享</span>
+        <span></span>
       </button>
       <button class="trash-entry" id="dataEntryBtn">
         <span class="trash-icon">⇄</span>
@@ -1026,7 +1041,7 @@ body.has-custom-bg .calendar-view .day.today{
           <button type="button" class="ghost-btn" id="removeAvatarBtn">移除头像</button>
           <input id="avatarFileInput" class="hidden" type="file" accept="image/*"/>
         </div>
-        <div class="small-help">头像会转为本地数据保存，不上传服务器。</div>
+        <div class="small-help">头像仅在登录后保存到你的云端账户。</div>
       </div>
     </div>
     <div class="field">
@@ -1084,6 +1099,39 @@ body.has-custom-bg .calendar-view .day.today{
         <button type="button" class="primary-btn" id="workspaceSaveBtn">保存</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="accountModalBg" class="modal-bg hidden">
+  <div class="modal" style="width:min(430px,100%)">
+    <h2 style="font-size:19px">账号</h2>
+    <div id="accountLoggedOut">
+      <div class="account-tabs"><button type="button" class="ghost-btn active" id="loginTabBtn">登录</button><button type="button" class="ghost-btn" id="registerTabBtn">注册</button></div>
+      <div class="field"><label>用户名</label><input id="accountUsername" maxlength="24" autocomplete="username" placeholder="2–24 个字符"/></div>
+      <div class="field"><label>密码</label><input id="accountPassword" type="password" maxlength="72" autocomplete="current-password" placeholder="至少 6 个字符"/></div>
+      <div class="field hidden" id="confirmPasswordField"><label>确认密码</label><input id="accountPasswordConfirm" type="password" maxlength="72" autocomplete="new-password"/></div>
+      <div class="account-status" id="accountStatus">未登录时日历仅保存在当前浏览器，美化功能锁定。</div>
+      <div class="modal-actions" style="justify-content:flex-end"><button type="button" class="ghost-btn" id="accountCloseBtn">取消</button><button type="button" class="primary-btn" id="accountSubmitBtn">登录</button></div>
+    </div>
+    <div id="accountLoggedIn" class="hidden">
+      <div class="field"><label>当前账号</label><div id="accountCurrentName" style="font-weight:800"></div></div>
+      <div class="account-status">个人设置与当前云端日历会自动同步。日历分享不会携带你的头像、昵称、介绍或背景。</div>
+      <div class="modal-actions" style="justify-content:flex-end"><button type="button" class="ghost-btn" id="accountLogoutBtn">退出登录</button><button type="button" class="primary-btn" id="accountDoneBtn">完成</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="shareModalBg" class="modal-bg hidden">
+  <div class="modal" style="width:min(620px,100%)">
+    <h2 style="font-size:19px">日历分享</h2>
+    <div class="share-mode-grid">
+      <div class="share-mode-card"><b>可编辑云端</b><p>登录用户输入分享码后加入同一份云端日历。任何成员的修改都会同步给其他成员。</p><button type="button" class="primary-btn" id="createCloudShareBtn">生成协作码</button></div>
+      <div class="share-mode-card"><b>只能编辑本地</b><p>生成当前日历的快照。接收者导入后得到独立本地副本，后续修改不会回传。</p><button type="button" class="ghost-btn" id="createLocalShareBtn">生成副本码</button></div>
+    </div>
+    <div class="field"><label>我的分享码</label><input id="generatedShareCode" class="share-code" readonly placeholder="生成后显示在这里"/></div>
+    <div class="field"><label>输入分享码</label><input id="redeemShareCode" class="share-code" maxlength="16" placeholder="ABCDE-FGHIJ"/></div>
+    <div class="account-status" id="shareStatus">本地副本码可由游客导入；云端协作码需要登录。</div>
+    <div class="modal-actions" style="justify-content:flex-end"><button type="button" class="ghost-btn" id="shareCloseBtn">关闭</button><button type="button" class="primary-btn" id="redeemShareBtn">导入 / 加入</button></div>
   </div>
 </div>
 
@@ -1164,9 +1212,7 @@ const today=new Date();
 const dateStr=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const demoDate=off=>{const d=new Date();d.setDate(d.getDate()+off);return dateStr(d)};
 
-const seed=[
- {id:crypto.randomUUID(),title:"节目招募推送",type:"线上",mainOwner:"宣传部",otherOwners:[],date:"2026-09-08",time:"",project:"2026秋季迎新晚会（闪耀至月光尽头）",location:"",priority:"medium",status:"未开始",note:""},
-];
+const seed=[];
 
 function canonicalPerson(name){
   const v=String(name||"").trim();
@@ -2791,8 +2837,52 @@ deleteBtn.onclick=()=>{
   }
 }
 
+/* ===== v1.9 Supabase account / cloud calendar / sharing ===== */
+const CC_SUPABASE_URL="https://czydcsdgoiwivwpnggiq.supabase.co";
+const CC_SUPABASE_KEY="sb_publishable_YYkORrCLJzGuWOaAqLX0uQ_VimButZj";
+const CC_SESSION_KEY="club_calendar_v19_session";
+const CC_CALENDAR_ID_KEY="club_calendar_v19_calendar_id";
+let ccSession=null,ccUser=null,ccProfile=null,ccCalendarId="",ccSyncTimer=null,ccApplyingCloud=false,ccAuthMode="login",ccRealtime=null;
+const ccHeaders=(token=ccSession?.access_token)=>({apikey:CC_SUPABASE_KEY,"Content-Type":"application/json",...(token?{Authorization:`Bearer ${token}`}:{})});
+async function ccFetch(path,opts={}){const r=await fetch(CC_SUPABASE_URL+path,{...opts,headers:{...ccHeaders(),...(opts.headers||{})}});let d={};try{d=await r.json()}catch(_){ }if(!r.ok)throw new Error(d.error||d.message||`HTTP ${r.status}`);return d}
+function ccSaveSession(s){ccSession=s||null;ccUser=s?.user||null;if(s)localStorage.setItem(CC_SESSION_KEY,JSON.stringify(s));else localStorage.removeItem(CC_SESSION_KEY)}
+async function ccRefreshSession(){if(!ccSession?.refresh_token)return false;try{const r=await fetch(`${CC_SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:ccSession.refresh_token})});if(!r.ok)throw 0;ccSaveSession(await r.json());return true}catch(_){ccSaveSession(null);return false}}
+async function ccAuthCall(action,username,password){const r=await fetch(`${CC_SUPABASE_URL}/functions/v1/club-calendar-auth`,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({action,username,password})});const d=await r.json();if(!r.ok)throw new Error(d.error||"请求失败");ccSaveSession(d.session);return d.session}
+function ccCalendarPayload(){return {items,projects,colors,trash,workspaceName:loadWorkspaceName(),schemaVersion:1}}
+function ccApplyCalendarData(data){if(!data||typeof data!=="object")return;ccApplyingCloud=true;items=Array.isArray(data.items)?data.items.map(normalizeItem):[];projects=Array.isArray(data.projects)?data.projects:[];colors={...DEFAULT_COLORS,...(data.colors||{})};trash=data.trash&&typeof data.trash==="object"?data.trash:{tasks:[],projects:[]};if(data.workspaceName)localStorage.setItem(WORKSPACE_KEY,String(data.workspaceName));localStorage.setItem(ITEM_KEY,JSON.stringify(items));localStorage.setItem(PROJECT_KEY,JSON.stringify(projects));localStorage.setItem(COLOR_KEY,JSON.stringify(colors));localStorage.setItem(TRASH_KEY,JSON.stringify(trash));ccApplyingCloud=false}
+async function ccLoadProfile(){if(!ccUser)return;const rows=await ccFetch(`/rest/v1/profiles?user_id=eq.${encodeURIComponent(ccUser.id)}&select=username,nickname,intro,settings`);ccProfile=rows[0]||null;if(!ccProfile)return;profile.nickname=ccProfile.nickname||ccProfile.username;profile.intro=ccProfile.intro||"这是一条介绍(*￣▽￣*)";const s=ccProfile.settings||{};appearance={imageOpacity:Number(s.imageOpacity??22),cellOpacity:Number(s.cellOpacity??90),themeColor:s.themeColor||"#b85f7d"};localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));localStorage.setItem(APPEARANCE_KEY,JSON.stringify(appearance));await ccLoadCloudAsset("avatar.jpg",blob=>blobToDataUrl(blob).then(v=>{profile.avatarData=v;renderProfile()}));await ccLoadCloudAsset("background.jpg",async blob=>{await assetPut(BG_ASSET_KEY,blob);await loadBackgroundAsset()});applyAppearance();renderProfile()}
+async function ccUpdateProfile(){if(!ccUser)return;const body={nickname:profile.nickname,intro:profile.intro,settings:{imageOpacity:appearance.imageOpacity,cellOpacity:appearance.cellOpacity,themeColor:appearance.themeColor},updated_at:new Date().toISOString()};await ccFetch(`/rest/v1/profiles?user_id=eq.${encodeURIComponent(ccUser.id)}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify(body)})}
+async function ccUploadAsset(name,blob){if(!ccUser||!(blob instanceof Blob))return;const path=`/storage/v1/object/club-calendar-assets/${ccUser.id}/${name}`;let r=await fetch(CC_SUPABASE_URL+path,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`,"Content-Type":blob.type||"image/jpeg","x-upsert":"true"},body:blob});if(r.status===401&&await ccRefreshSession())r=await fetch(CC_SUPABASE_URL+path,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`,"Content-Type":blob.type||"image/jpeg","x-upsert":"true"},body:blob});if(!r.ok)throw new Error("图片云端保存失败")}
+async function ccDeleteAsset(name){if(!ccUser)return;await fetch(`${CC_SUPABASE_URL}/storage/v1/object/club-calendar-assets/${ccUser.id}/${name}`,{method:"DELETE",headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}})}
+async function ccLoadCloudAsset(name,fn){if(!ccUser)return;const r=await fetch(`${CC_SUPABASE_URL}/storage/v1/object/club-calendar-assets/${ccUser.id}/${name}`,{headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}});if(r.ok)await fn(await r.blob())}
+async function ccLoadCalendar(){if(!ccUser)return;let id=localStorage.getItem(CC_CALENDAR_ID_KEY)||"";let rows=id?await ccFetch(`/rest/v1/calendars?id=eq.${encodeURIComponent(id)}&select=id,name,data,updated_at`):[];if(!rows.length){const memberships=await ccFetch(`/rest/v1/calendar_members?user_id=eq.${encodeURIComponent(ccUser.id)}&select=calendar_id,role&order=created_at.asc`);if(memberships.length){id=memberships[0].calendar_id;rows=await ccFetch(`/rest/v1/calendars?id=eq.${encodeURIComponent(id)}&select=id,name,data,updated_at`)}}if(!rows.length)return;ccCalendarId=rows[0].id;localStorage.setItem(CC_CALENDAR_ID_KEY,ccCalendarId);ccApplyCalendarData(rows[0].data);renderAll();ccStartRealtime()}
+async function ccPushCalendar(){if(!ccUser||!ccCalendarId||ccApplyingCloud)return;try{await ccFetch(`/rest/v1/calendars?id=eq.${encodeURIComponent(ccCalendarId)}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({name:loadWorkspaceName(),data:ccCalendarPayload(),updated_at:new Date().toISOString()})})}catch(e){console.warn("Cloud sync failed",e)}}
+function ccScheduleSync(){if(!ccUser||!ccCalendarId||ccApplyingCloud)return;clearTimeout(ccSyncTimer);ccSyncTimer=setTimeout(ccPushCalendar,500)}
+const ccLegacySave=save;save=function(){ccLegacySave();ccScheduleSync()};
+function ccRenderAccount(){const logged=!!ccUser;profileCardBtn.classList.toggle("guest",!logged);appearanceEntryBtn.classList.toggle("locked-entry",!logged);if(!logged){profileNameText.textContent="登录 / 注册";profileIntroText.textContent="游客模式 · 数据仅保存在本机";profileAvatarText.textContent="↪";profileAvatarImg.classList.add("hidden");profileAvatarText.classList.remove("hidden")}else{renderProfile()}}
+function ccOpenAccount(){accountLoggedOut.classList.toggle("hidden",!!ccUser);accountLoggedIn.classList.toggle("hidden",!ccUser);if(ccUser){accountCurrentName.textContent=ccProfile?.username||profile.nickname}else{accountUsername.value="";accountPassword.value="";accountPasswordConfirm.value="";accountStatus.textContent="未登录时日历仅保存在当前浏览器，美化功能锁定。"}accountModalBg.classList.remove("hidden")}
+profileCardBtn.onclick=ccOpenAccount;
+loginTabBtn.onclick=()=>{ccAuthMode="login";loginTabBtn.classList.add("active");registerTabBtn.classList.remove("active");confirmPasswordField.classList.add("hidden");accountSubmitBtn.textContent="登录"};
+registerTabBtn.onclick=()=>{ccAuthMode="register";registerTabBtn.classList.add("active");loginTabBtn.classList.remove("active");confirmPasswordField.classList.remove("hidden");accountSubmitBtn.textContent="注册"};
+accountCloseBtn.onclick=accountDoneBtn.onclick=()=>accountModalBg.classList.add("hidden");accountModalBg.onclick=e=>{if(e.target===accountModalBg)accountModalBg.classList.add("hidden")};
+accountSubmitBtn.onclick=async()=>{const u=accountUsername.value.trim(),p=accountPassword.value;if(ccAuthMode==="register"&&p!==accountPasswordConfirm.value){accountStatus.textContent="两次密码不一致";return}accountSubmitBtn.disabled=true;accountStatus.textContent=ccAuthMode==="login"?"正在登录…":"正在注册…";try{await ccAuthCall(ccAuthMode,u,p);await ccAfterLogin();accountModalBg.classList.add("hidden")}catch(e){accountStatus.textContent=e.message||"操作失败"}finally{accountSubmitBtn.disabled=false}};
+accountLogoutBtn.onclick=async()=>{try{if(ccSession?.access_token)await fetch(`${CC_SUPABASE_URL}/auth/v1/logout`,{method:"POST",headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}})}catch(_){}ccSaveSession(null);ccCalendarId="";localStorage.removeItem(CC_CALENDAR_ID_KEY);ccStopRealtime();location.reload()};
+const ccOldAppearanceOpen=appearanceEntryBtn.onclick;appearanceEntryBtn.onclick=()=>{if(!ccUser){ccOpenAccount();accountStatus.textContent="登录后才能使用外观与背景。";return}ccOldAppearanceOpen()};
+const ccOldProfileSave=profileSaveBtn.onclick;profileSaveBtn.onclick=async()=>{ccOldProfileSave();if(!ccUser)return;try{if(profile.avatarData){const b=await (await fetch(profile.avatarData)).blob();await ccUploadAsset("avatar.jpg",b)}else await ccDeleteAsset("avatar.jpg");await ccUpdateProfile()}catch(e){alert(e.message)}};
+const ccOldAppearanceSave=appearanceSaveBtnEl.onclick;appearanceSaveBtnEl.onclick=async()=>{if(!ccUser){ccOpenAccount();return}await ccOldAppearanceSave();try{const b=await assetGet(BG_ASSET_KEY).catch(()=>null);if(b instanceof Blob)await ccUploadAsset("background.jpg",b);else await ccDeleteAsset("background.jpg");await ccUpdateProfile()}catch(e){alert(e.message)}};
+function ccStartRealtime(){ccStopRealtime();if(!ccUser||!ccCalendarId)return;const ws=CC_SUPABASE_URL.replace("https://","wss://")+`/realtime/v1/websocket?apikey=${encodeURIComponent(CC_SUPABASE_KEY)}&vsn=1.0.0`;try{ccRealtime=new WebSocket(ws);ccRealtime.onopen=()=>{ccRealtime.send(JSON.stringify({topic:`realtime:public:calendars:id=eq.${ccCalendarId}`,event:"phx_join",payload:{config:{broadcast:{self:false},presence:{key:""},postgres_changes:[{event:"UPDATE",schema:"public",table:"calendars",filter:`id=eq.${ccCalendarId}`}]}},ref:"1"}))};ccRealtime.onmessage=e=>{try{const m=JSON.parse(e.data);const rec=m?.payload?.data?.record||m?.payload?.record;if(rec?.id===ccCalendarId&&rec.data){ccApplyCalendarData(rec.data);renderAll()}}catch(_){}}}catch(e){console.warn(e)}}
+function ccStopRealtime(){if(ccRealtime){try{ccRealtime.close()}catch(_){}ccRealtime=null}}
+shareEntryBtn.onclick=()=>{generatedShareCode.value="";redeemShareCode.value="";shareStatus.textContent="本地副本码可由游客导入；云端协作码需要登录。";shareModalBg.classList.remove("hidden")};shareCloseBtn.onclick=()=>shareModalBg.classList.add("hidden");shareModalBg.onclick=e=>{if(e.target===shareModalBg)shareModalBg.classList.add("hidden")};
+async function ccShareCall(body){let r=await fetch(`${CC_SUPABASE_URL}/functions/v1/club-calendar-share`,{method:"POST",headers:ccHeaders(),body:JSON.stringify(body)});if(r.status===401&&ccSession&&await ccRefreshSession())r=await fetch(`${CC_SUPABASE_URL}/functions/v1/club-calendar-share`,{method:"POST",headers:ccHeaders(),body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.error||"分享操作失败");return d}
+createCloudShareBtn.onclick=async()=>{if(!ccUser){shareStatus.textContent="可编辑云端分享需要先登录。";return}try{const d=await ccShareCall({action:"create",calendar_id:ccCalendarId,mode:"cloud"});generatedShareCode.value=d.code;shareStatus.textContent="协作码已生成。对方登录后输入即可加入同一云端日历。"}catch(e){shareStatus.textContent=e.message}};
+createLocalShareBtn.onclick=async()=>{if(!ccUser){shareStatus.textContent="生成分享码需要登录；游客可以导入本地副本码。";return}try{await ccPushCalendar();const d=await ccShareCall({action:"create",calendar_id:ccCalendarId,mode:"local"});generatedShareCode.value=d.code;shareStatus.textContent="副本码已生成。接收者导入后与原日历断开。"}catch(e){shareStatus.textContent=e.message}};
+redeemShareBtn.onclick=async()=>{const code=redeemShareCode.value.trim().toUpperCase();if(!code)return;try{const d=await ccShareCall({action:"redeem",code});if(d.mode==="local"){if(!confirm("导入本地副本会覆盖当前浏览器中的日历内容。继续吗？"))return;ccApplyCalendarData(d.data);ccCalendarId="";localStorage.removeItem(CC_CALENDAR_ID_KEY);renderAll();shareModalBg.classList.add("hidden");return}ccCalendarId=d.calendar.id;localStorage.setItem(CC_CALENDAR_ID_KEY,ccCalendarId);ccApplyCalendarData(d.calendar.data);renderAll();ccStartRealtime();shareStatus.textContent="已加入云端协作日历。"}catch(e){shareStatus.textContent=e.message}};
+async function ccAfterLogin(){const hadCloudId=!!localStorage.getItem(CC_CALENDAR_ID_KEY);const legacyPayload=!hadCloudId&&items.length>0?ccCalendarPayload():null;await ccLoadProfile();await ccLoadCalendar();if(legacyPayload&&ccCalendarId&&confirm("检测到本机旧版日历。是否把这份本机日历上传到当前账号？")){ccApplyCalendarData(legacyPayload);renderAll();await ccPushCalendar()}ccRenderAccount()}
+async function ccInit(){try{const raw=localStorage.getItem(CC_SESSION_KEY);if(raw)ccSaveSession(JSON.parse(raw));if(ccSession){const exp=Number(ccSession.expires_at||0)*1000;if(exp&&Date.now()>exp-60000)await ccRefreshSession()}if(ccSession?.access_token){const r=await fetch(`${CC_SUPABASE_URL}/auth/v1/user`,{headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}});if(r.ok){ccUser=await r.json();await ccAfterLogin()}else ccSaveSession(null)}if(!ccUser){appearance={imageOpacity:22,cellOpacity:90,themeColor:"#b85f7d"};profile={nickname:"登录 / 注册",intro:"游客模式 · 数据仅保存在本机",avatarData:""};revokeCurrentBgUrl();document.body.classList.remove("has-custom-bg");calendarBg.style.backgroundImage="none";applyAppearance();ccRenderAccount()}}catch(e){console.error("v1.9 init",e);ccRenderAccount()}}
+
 exportTableBtn.onclick=exportScheduleTable;
 renderAll();
+ccInit();
 (async()=>{
   await migrateLegacyBackground();
   await loadBackgroundAsset();
