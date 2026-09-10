@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>元火 · 个人事务台 v1.9</title>
+<title>元火 · 个人事务台 v1.9.3</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzAiIGZpbGw9IiNkODRiNWQiLz48dGV4dCB4PSIzMiIgeT0iMzIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIiBmb250LXNpemU9IjM0IiBmb250LXdlaWdodD0iODAwIiBmb250LWZhbWlseT0iTWljcm9zb2Z0IFlhSGVpLFBpbmdGYW5nIFNDLE5vdG8gU2FucyBDSksgU0Msc2Fucy1zZXJpZiIgZmlsbD0id2hpdGUiPuWFgzwvdGV4dD48L3N2Zz4=">
 <link rel="shortcut icon" href="favicon.ico">
 <style>
@@ -620,7 +620,7 @@ body.has-custom-bg .calendar-view .day.today{
 }
 
 
-/* v1.9 account + sharing */
+/* v1.9.2 account + sharing */
 .account-tabs{display:flex;gap:6px;margin:8px 0 16px}.account-tabs button{flex:1}
 .account-tabs button.active{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .account-status,.cloud-status{font-size:10px;color:#8b96a5;line-height:1.5}.cloud-status{margin-left:auto}
@@ -993,8 +993,20 @@ body.has-custom-bg .calendar-view .day.today{
     <h2 style="font-size:19px">数据管理</h2>
     <div class="data-manager">
       <div class="data-manager-intro">
-        将事务、项目、部门颜色、昵称、头像、背景、主题色和其他本地设置加密为一串可复制的迁移密钥。数据只在本机加密/解密，不上传服务器。
+        日历内容与个人设置分开管理。日历可以用无需密码的单独密钥迁移；完整账号外观和本地设置仍可使用加密迁移密钥。
       </div>
+      <section class="data-manager-card">
+        <div class="data-manager-title">日历迁移密钥（无需密码）</div>
+        <div class="data-manager-help">只包含事务、项目、部门颜色、回收站和工作区名称，不包含头像、昵称、介绍、背景或主题色。适合把本地办公数据搬到网页端。</div>
+        <button type="button" class="primary-btn data-manager-action" id="calendarKeyExportBtn">生成日历密钥</button>
+        <textarea id="calendarKeyExport" class="data-transfer-box" readonly placeholder="生成后的日历密钥会显示在这里"></textarea>
+        <div class="data-transfer-actions">
+          <div class="small-help" id="calendarKeyStatus">无需密码；请把密钥视为可读取日历内容的文件。</div>
+          <button type="button" class="ghost-btn" id="calendarKeyCopyBtn" disabled>复制密钥</button>
+        </div>
+        <textarea id="calendarKeyImport" class="data-transfer-box" placeholder="在这里粘贴日历迁移密钥"></textarea>
+        <button type="button" class="ghost-btn data-manager-action" id="calendarKeyImportBtn">导入日历密钥</button>
+      </section>
       <section class="data-manager-card">
         <div class="data-manager-title">生成迁移密钥</div>
         <div class="data-manager-help">设置密码后生成一串加密文本。把“迁移密钥 + 密码”带到另一台设备即可恢复全部数据。</div>
@@ -1116,7 +1128,7 @@ body.has-custom-bg .calendar-view .day.today{
     <div id="accountLoggedIn" class="hidden">
       <div class="field"><label>当前账号</label><div id="accountCurrentName" style="font-weight:800"></div></div>
       <div class="account-status">个人设置与当前云端日历会自动同步。日历分享不会携带你的头像、昵称、介绍或背景。</div>
-      <div class="modal-actions" style="justify-content:flex-end"><button type="button" class="ghost-btn" id="accountLogoutBtn">退出登录</button><button type="button" class="primary-btn" id="accountDoneBtn">完成</button></div>
+      <div class="modal-actions" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><button type="button" class="ghost-btn" id="accountLogoutBtn">退出登录</button><div class="right-actions"><button type="button" class="ghost-btn" id="accountEditProfileBtn">编辑个人资料</button><button type="button" class="primary-btn" id="accountDoneBtn">完成</button></div></div>
     </div>
   </div>
 </div>
@@ -1126,11 +1138,11 @@ body.has-custom-bg .calendar-view .day.today{
     <h2 style="font-size:19px">日历分享</h2>
     <div class="share-mode-grid">
       <div class="share-mode-card"><b>可编辑云端</b><p>登录用户输入分享码后加入同一份云端日历。任何成员的修改都会同步给其他成员。</p><button type="button" class="primary-btn" id="createCloudShareBtn">生成协作码</button></div>
-      <div class="share-mode-card"><b>只能编辑本地</b><p>生成当前日历的快照。接收者导入后得到独立本地副本，后续修改不会回传。</p><button type="button" class="ghost-btn" id="createLocalShareBtn">生成副本码</button></div>
+      <div class="share-mode-card"><b>只能编辑本地</b><p>生成当前日历的快照。登录用户与游客都可以生成；接收者导入后得到独立本地副本，后续修改不会回传。</p><button type="button" class="ghost-btn" id="createLocalShareBtn">生成副本码</button></div>
     </div>
     <div class="field"><label>我的分享码</label><input id="generatedShareCode" class="share-code" readonly placeholder="生成后显示在这里"/></div>
     <div class="field"><label>输入分享码</label><input id="redeemShareCode" class="share-code" maxlength="16" placeholder="ABCDE-FGHIJ"/></div>
-    <div class="account-status" id="shareStatus">本地副本码可由游客导入；云端协作码需要登录。</div>
+    <div class="account-status" id="shareStatus">游客可以生成或导入本地副本码；云端协作码需要登录。</div>
     <div class="modal-actions" style="justify-content:flex-end"><button type="button" class="ghost-btn" id="shareCloseBtn">关闭</button><button type="button" class="primary-btn" id="redeemShareBtn">导入 / 加入</button></div>
   </div>
 </div>
@@ -1167,6 +1179,12 @@ const dataExportBtn=document.getElementById("dataExportBtn");
 const dataExportPassword=document.getElementById("dataExportPassword");
 const dataExportKey=document.getElementById("dataExportKey");
 const dataExportStatus=document.getElementById("dataExportStatus");
+const calendarKeyExportBtn=document.getElementById("calendarKeyExportBtn");
+const calendarKeyExport=document.getElementById("calendarKeyExport");
+const calendarKeyStatus=document.getElementById("calendarKeyStatus");
+const calendarKeyCopyBtn=document.getElementById("calendarKeyCopyBtn");
+const calendarKeyImport=document.getElementById("calendarKeyImport");
+const calendarKeyImportBtn=document.getElementById("calendarKeyImportBtn");
 const dataCopyBtn=document.getElementById("dataCopyBtn");
 const dataImportKey=document.getElementById("dataImportKey");
 const dataImportPassword=document.getElementById("dataImportPassword");
@@ -1929,6 +1947,25 @@ function showUndoMove(item,oldDate,newDate){
   undoTimer=setTimeout(()=>el.remove(),5000);
 }
 
+/* ===== v1.9.3 日历专用迁移密钥：无需密码 ===== */
+const CALENDAR_KEY_PREFIX="CCAL19.";
+const CALENDAR_KEY_MAGIC="CLUB_CALENDAR_ONLY";
+function calendarPayloadToKey(data){
+  const payload={magic:CALENDAR_KEY_MAGIC,version:1,appVersion:"1.9.3",exportedAt:new Date().toISOString(),data};
+  return CALENDAR_KEY_PREFIX+base64UrlEncodeText(JSON.stringify(payload));
+}
+function calendarKeyToPayload(key){
+  const clean=String(key||"").trim().replace(/\s+/g,"");
+  if(!clean.startsWith(CALENDAR_KEY_PREFIX))throw new Error("不是有效的日历迁移密钥");
+  const payload=JSON.parse(base64UrlDecodeText(clean.slice(CALENDAR_KEY_PREFIX.length)));
+  if(!payload||payload.magic!==CALENDAR_KEY_MAGIC||payload.version!==1||!payload.data)throw new Error("日历迁移密钥内容无效");
+  return payload.data;
+}
+async function copyPlainText(text,btn){
+  try{await navigator.clipboard.writeText(text)}catch(e){const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()}
+  if(btn){const old=btn.textContent;btn.textContent="已复制";setTimeout(()=>btn.textContent=old,1200)}
+}
+
 /* ===== v1.8 全量数据迁移：可复制密钥 + 密码 ===== */
 const DATA_BUNDLE_MAGIC="CLUB_CALENDAR_DATA";
 const DATA_BUNDLE_VERSION=2;
@@ -1972,7 +2009,7 @@ async function collectFullDataBundle(){
   }
   const bg=await assetGet(BG_ASSET_KEY).catch(()=>null);
   return {
-    magic:DATA_BUNDLE_MAGIC,version:DATA_BUNDLE_VERSION,appVersion:"1.8",
+    magic:DATA_BUNDLE_MAGIC,version:DATA_BUNDLE_VERSION,appVersion:"1.9.3",
     exportedAt:new Date().toISOString(),localStorage:local,
     indexedDB:{background:bg instanceof Blob?await blobToDataUrl(bg):null}
   };
@@ -2020,9 +2057,31 @@ dataEntryBtn.onclick=()=>{
   dataModalBg.classList.remove("hidden");
   dataExportPassword.value="";dataExportKey.value="";dataExportStatus.textContent="尚未生成";dataCopyBtn.disabled=true;
   dataImportKey.value="";dataImportPassword.value="";
+  calendarKeyExport.value="";calendarKeyImport.value="";calendarKeyCopyBtn.disabled=true;calendarKeyStatus.textContent="无需密码；请把密钥视为可读取日历内容的文件。";
 };
 dataCloseBtn.onclick=()=>dataModalBg.classList.add("hidden");
 dataModalBg.onclick=e=>{if(e.target===dataModalBg)dataModalBg.classList.add("hidden")};
+calendarKeyExportBtn.onclick=()=>{
+  try{
+    const key=calendarPayloadToKey(ccCalendarPayload());
+    calendarKeyExport.value=key;calendarKeyCopyBtn.disabled=false;
+    calendarKeyStatus.textContent=`已生成 · ${key.length.toLocaleString()} 字符 · 仅日历内容`;
+  }catch(e){alert("生成日历密钥失败："+(e.message||e))}
+};
+calendarKeyCopyBtn.onclick=()=>{if(calendarKeyExport.value)copyPlainText(calendarKeyExport.value,calendarKeyCopyBtn)};
+calendarKeyImportBtn.onclick=async()=>{
+  const key=calendarKeyImport.value.trim();if(!key){alert("请粘贴日历迁移密钥。");calendarKeyImport.focus();return}
+  const target=ccUser?"当前账号的云端日历":"当前浏览器的本地日历";
+  if(!confirm(`导入会覆盖${target}内容。个人头像、昵称、背景和主题色不会受影响。确定继续吗？`))return;
+  calendarKeyImportBtn.disabled=true;calendarKeyImportBtn.textContent="正在导入…";
+  try{
+    const data=calendarKeyToPayload(key);ccApplyCalendarData(data);renderAll();
+    if(ccUser&&ccCalendarId){await ccPushCalendar();calendarKeyStatus.textContent="已导入并同步到当前账号的云端日历。"}
+    else calendarKeyStatus.textContent="已导入到当前浏览器的本地日历。";
+    calendarKeyImport.value="";
+  }catch(e){alert("日历密钥导入失败："+(e.message||e))}
+  finally{calendarKeyImportBtn.disabled=false;calendarKeyImportBtn.textContent="导入日历密钥"}
+};
 dataExportBtn.onclick=async()=>{
   const password=dataExportPassword.value;
   if(password.length<4){alert("加密密码至少需要 4 个字符。");dataExportPassword.focus();return}
@@ -2837,7 +2896,7 @@ deleteBtn.onclick=()=>{
   }
 }
 
-/* ===== v1.9 Supabase account / cloud calendar / sharing ===== */
+/* ===== v1.9.2 Supabase account / cloud calendar / sharing ===== */
 const CC_SUPABASE_URL="https://czydcsdgoiwivwpnggiq.supabase.co";
 const CC_SUPABASE_KEY="sb_publishable_YYkORrCLJzGuWOaAqLX0uQ_VimButZj";
 const CC_SESSION_KEY="club_calendar_v19_session";
@@ -2862,6 +2921,26 @@ const ccLegacySave=save;save=function(){ccLegacySave();ccScheduleSync()};
 function ccRenderAccount(){const logged=!!ccUser;profileCardBtn.classList.toggle("guest",!logged);appearanceEntryBtn.classList.toggle("locked-entry",!logged);if(!logged){profileNameText.textContent="登录 / 注册";profileIntroText.textContent="游客模式 · 数据仅保存在本机";profileAvatarText.textContent="↪";profileAvatarImg.classList.add("hidden");profileAvatarText.classList.remove("hidden")}else{renderProfile()}}
 function ccOpenAccount(){accountLoggedOut.classList.toggle("hidden",!!ccUser);accountLoggedIn.classList.toggle("hidden",!ccUser);if(ccUser){accountCurrentName.textContent=ccProfile?.username||profile.nickname}else{accountUsername.value="";accountPassword.value="";accountPasswordConfirm.value="";accountStatus.textContent="未登录时日历仅保存在当前浏览器，美化功能锁定。"}accountModalBg.classList.remove("hidden")}
 profileCardBtn.onclick=ccOpenAccount;
+function ccOpenProfileEditor(){
+  if(!ccUser){ccOpenAccount();accountStatus.textContent="登录后才能编辑头像、昵称和介绍。";return}
+  pendingAvatarData=profile.avatarData;
+  nicknameInput.value=profile.nickname;
+  profileIntroInput.value=profile.intro||"这是一条介绍(*￣▽￣*)";
+  const initial=(profile.nickname.trim()[0]||"我").toUpperCase();
+  profilePreviewText.textContent=initial;
+  if(pendingAvatarData){
+    profilePreviewImg.src=pendingAvatarData;
+    profilePreviewImg.classList.remove("hidden");
+    profilePreviewText.classList.add("hidden");
+  }else{
+    profilePreviewImg.classList.add("hidden");
+    profilePreviewText.classList.remove("hidden");
+  }
+  accountModalBg.classList.add("hidden");
+  profileModalBg.classList.remove("hidden");
+  setTimeout(()=>nicknameInput.focus(),20);
+}
+accountEditProfileBtn.onclick=ccOpenProfileEditor;
 loginTabBtn.onclick=()=>{ccAuthMode="login";loginTabBtn.classList.add("active");registerTabBtn.classList.remove("active");confirmPasswordField.classList.add("hidden");accountSubmitBtn.textContent="登录"};
 registerTabBtn.onclick=()=>{ccAuthMode="register";registerTabBtn.classList.add("active");loginTabBtn.classList.remove("active");confirmPasswordField.classList.remove("hidden");accountSubmitBtn.textContent="注册"};
 accountCloseBtn.onclick=accountDoneBtn.onclick=()=>accountModalBg.classList.add("hidden");accountModalBg.onclick=e=>{if(e.target===accountModalBg)accountModalBg.classList.add("hidden")};
@@ -2872,13 +2951,13 @@ const ccOldProfileSave=profileSaveBtn.onclick;profileSaveBtn.onclick=async()=>{c
 const ccOldAppearanceSave=appearanceSaveBtnEl.onclick;appearanceSaveBtnEl.onclick=async()=>{if(!ccUser){ccOpenAccount();return}await ccOldAppearanceSave();try{const b=await assetGet(BG_ASSET_KEY).catch(()=>null);if(b instanceof Blob)await ccUploadAsset("background.jpg",b);else await ccDeleteAsset("background.jpg");await ccUpdateProfile()}catch(e){alert(e.message)}};
 function ccStartRealtime(){ccStopRealtime();if(!ccUser||!ccCalendarId)return;const ws=CC_SUPABASE_URL.replace("https://","wss://")+`/realtime/v1/websocket?apikey=${encodeURIComponent(CC_SUPABASE_KEY)}&vsn=1.0.0`;try{ccRealtime=new WebSocket(ws);ccRealtime.onopen=()=>{ccRealtime.send(JSON.stringify({topic:`realtime:public:calendars:id=eq.${ccCalendarId}`,event:"phx_join",payload:{config:{broadcast:{self:false},presence:{key:""},postgres_changes:[{event:"UPDATE",schema:"public",table:"calendars",filter:`id=eq.${ccCalendarId}`}]}},ref:"1"}))};ccRealtime.onmessage=e=>{try{const m=JSON.parse(e.data);const rec=m?.payload?.data?.record||m?.payload?.record;if(rec?.id===ccCalendarId&&rec.data){ccApplyCalendarData(rec.data);renderAll()}}catch(_){}}}catch(e){console.warn(e)}}
 function ccStopRealtime(){if(ccRealtime){try{ccRealtime.close()}catch(_){}ccRealtime=null}}
-shareEntryBtn.onclick=()=>{generatedShareCode.value="";redeemShareCode.value="";shareStatus.textContent="本地副本码可由游客导入；云端协作码需要登录。";shareModalBg.classList.remove("hidden")};shareCloseBtn.onclick=()=>shareModalBg.classList.add("hidden");shareModalBg.onclick=e=>{if(e.target===shareModalBg)shareModalBg.classList.add("hidden")};
+shareEntryBtn.onclick=()=>{generatedShareCode.value="";redeemShareCode.value="";shareStatus.textContent="游客可以生成或导入本地副本码；云端协作码需要登录。";shareModalBg.classList.remove("hidden")};shareCloseBtn.onclick=()=>shareModalBg.classList.add("hidden");shareModalBg.onclick=e=>{if(e.target===shareModalBg)shareModalBg.classList.add("hidden")};
 async function ccShareCall(body){let r=await fetch(`${CC_SUPABASE_URL}/functions/v1/club-calendar-share`,{method:"POST",headers:ccHeaders(),body:JSON.stringify(body)});if(r.status===401&&ccSession&&await ccRefreshSession())r=await fetch(`${CC_SUPABASE_URL}/functions/v1/club-calendar-share`,{method:"POST",headers:ccHeaders(),body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.error||"分享操作失败");return d}
 createCloudShareBtn.onclick=async()=>{if(!ccUser){shareStatus.textContent="可编辑云端分享需要先登录。";return}try{const d=await ccShareCall({action:"create",calendar_id:ccCalendarId,mode:"cloud"});generatedShareCode.value=d.code;shareStatus.textContent="协作码已生成。对方登录后输入即可加入同一云端日历。"}catch(e){shareStatus.textContent=e.message}};
-createLocalShareBtn.onclick=async()=>{if(!ccUser){shareStatus.textContent="生成分享码需要登录；游客可以导入本地副本码。";return}try{await ccPushCalendar();const d=await ccShareCall({action:"create",calendar_id:ccCalendarId,mode:"local"});generatedShareCode.value=d.code;shareStatus.textContent="副本码已生成。接收者导入后与原日历断开。"}catch(e){shareStatus.textContent=e.message}};
+createLocalShareBtn.onclick=async()=>{try{let d;if(!ccUser){d=await ccShareCall({action:"create",mode:"local",snapshot_data:ccCalendarPayload()})}else{await ccPushCalendar();d=await ccShareCall({action:"create",calendar_id:ccCalendarId,mode:"local"})}generatedShareCode.value=d.code;shareStatus.textContent=d.guest?"游客副本码已生成，有效期 7 天。接收者导入后与原日历断开。":"副本码已生成。接收者导入后与原日历断开。"}catch(e){shareStatus.textContent=e.message}};
 redeemShareBtn.onclick=async()=>{const code=redeemShareCode.value.trim().toUpperCase();if(!code)return;try{const d=await ccShareCall({action:"redeem",code});if(d.mode==="local"){if(!confirm("导入本地副本会覆盖当前浏览器中的日历内容。继续吗？"))return;ccApplyCalendarData(d.data);ccCalendarId="";localStorage.removeItem(CC_CALENDAR_ID_KEY);renderAll();shareModalBg.classList.add("hidden");return}ccCalendarId=d.calendar.id;localStorage.setItem(CC_CALENDAR_ID_KEY,ccCalendarId);ccApplyCalendarData(d.calendar.data);renderAll();ccStartRealtime();shareStatus.textContent="已加入云端协作日历。"}catch(e){shareStatus.textContent=e.message}};
 async function ccAfterLogin(){const hadCloudId=!!localStorage.getItem(CC_CALENDAR_ID_KEY);const legacyPayload=!hadCloudId&&items.length>0?ccCalendarPayload():null;await ccLoadProfile();await ccLoadCalendar();if(legacyPayload&&ccCalendarId&&confirm("检测到本机旧版日历。是否把这份本机日历上传到当前账号？")){ccApplyCalendarData(legacyPayload);renderAll();await ccPushCalendar()}ccRenderAccount()}
-async function ccInit(){try{const raw=localStorage.getItem(CC_SESSION_KEY);if(raw)ccSaveSession(JSON.parse(raw));if(ccSession){const exp=Number(ccSession.expires_at||0)*1000;if(exp&&Date.now()>exp-60000)await ccRefreshSession()}if(ccSession?.access_token){const r=await fetch(`${CC_SUPABASE_URL}/auth/v1/user`,{headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}});if(r.ok){ccUser=await r.json();await ccAfterLogin()}else ccSaveSession(null)}if(!ccUser){appearance={imageOpacity:22,cellOpacity:90,themeColor:"#b85f7d"};profile={nickname:"登录 / 注册",intro:"游客模式 · 数据仅保存在本机",avatarData:""};revokeCurrentBgUrl();document.body.classList.remove("has-custom-bg");calendarBg.style.backgroundImage="none";applyAppearance();ccRenderAccount()}}catch(e){console.error("v1.9 init",e);ccRenderAccount()}}
+async function ccInit(){try{const raw=localStorage.getItem(CC_SESSION_KEY);if(raw)ccSaveSession(JSON.parse(raw));if(ccSession){const exp=Number(ccSession.expires_at||0)*1000;if(exp&&Date.now()>exp-60000)await ccRefreshSession()}if(ccSession?.access_token){const r=await fetch(`${CC_SUPABASE_URL}/auth/v1/user`,{headers:{apikey:CC_SUPABASE_KEY,Authorization:`Bearer ${ccSession.access_token}`}});if(r.ok){ccUser=await r.json();await ccAfterLogin()}else ccSaveSession(null)}if(!ccUser){appearance={imageOpacity:22,cellOpacity:90,themeColor:"#b85f7d"};profile={nickname:"登录 / 注册",intro:"游客模式 · 数据仅保存在本机",avatarData:""};revokeCurrentBgUrl();document.body.classList.remove("has-custom-bg");calendarBg.style.backgroundImage="none";applyAppearance();ccRenderAccount()}}catch(e){console.error("v1.9.2 init",e);ccRenderAccount()}}
 
 exportTableBtn.onclick=exportScheduleTable;
 renderAll();
